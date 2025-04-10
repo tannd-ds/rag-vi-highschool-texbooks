@@ -1,0 +1,10 @@
+requests
+
+timm
+flash-attn
+einops
+
+FlagEmbedding # BGE-M3
+
+qdrant-client
+
