@@ -1,12 +1,18 @@
-# High school Textbook End-to-End Retrieval Augmented Generation
-
-- Crawl all the textbooks from the website: https://www.hoc10.vn/
-- ORC all the textbooks
-- Index all the textbooks
-
-ORC: https://huggingface.co/5CD-AI/Vintern-1B-v2
-
 # High School Textbook RAG: Question Answering System
+
+<div style="text-align: center;">
+    <img alt="pytorch" src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white"/>
+    <img alt="gemini" src="https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white"/>
+    <img alt="openai" src="https://img.shields.io/badge/ChatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white" />
+    <img alt="langchain" src="https://img.shields.io/badge/langchain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white"/>
+    <img alt="huggingface" src="https://img.shields.io/badge/-HuggingFace-FDEE21?style=for-the-badge&logo=HuggingFace&logoColor=black"/>
+</div>
+
+<div style="text-align: center;">
+    <img alt="rag" src="https://img.shields.io/badge/Retrieval_Augmented_Generation_%28RAG%29-EE4C2C?style=for-the-badge&logoColor=red"/>
+    <img alt="qdrant" src="https://img.shields.io/badge/Qdrant-dc244c?style=for-the-badge&logoColor=red"/>
+    <img alt="docker" src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white"/>
+</div>
 
 ## Overview
 
@@ -16,33 +22,25 @@ The primary goal is to create an intelligent assistant that can understand and r
 
 ## Features
 
-* **Web Crawling:** Extracts textbook data (images and metadata) directly from online sources (e.g., hoc10.vn) [cite: highschool_textbook_rag/extract_book.py].
-* **Optical Character Recognition (OCR):** Employs a powerful Vision-Language Model (`5CD-AI/Vintern-1B-v2`) to accurately extract text content, including titles and formatting, from textbook images [cite: highschool_textbook_rag/orc.py].
-* **Text Processing:** Implements text chunking strategies (e.g., by sentence or fixed size with overlap) to prepare text for embedding [cite: highschool_textbook_rag/rag/utils.py].
-* **Dense Text Embedding:** Utilizes the `BAAI/bge-m3` model via the `FlagEmbedding` library to generate high-dimensional vector representations (embeddings) of text chunks, capturing semantic meaning [cite: highschool_textbook_rag/rag/embed.py].
-* **Vector Indexing & Storage:** Leverages Qdrant, an efficient vector database, to store and index text embeddings for fast retrieval, using Cosine similarity for distance measurement [cite: highschool_textbook_rag/rag/indexer.py, highschool_textbook_rag/data/qdrant_storage/collections/153_ngu-van-10-tap-1/config.json, highschool_textbook_rag/data/qdrant_storage/collections/embeddings/config.json].
-* **Semantic Retrieval:** Implements a retrieval mechanism that finds the most relevant text chunks (contexts) from the vector store based on the semantic similarity of the user's query embedding [cite: highschool_textbook_rag/rag/retriever.py].
-* **Large Language Model (LLM) Integration:** Integrates with Google's Gemini API (`gemini-2.0-flash` model) for generative question answering [cite: highschool_textbook_rag/rag/generator.py].
-* **Prompt Engineering:** Formats retrieved contexts and the user's question into an effective prompt to guide the LLM in generating accurate and contextually relevant answers [cite: highschool_textbook_rag/rag/generator.py].
-* **End-to-End Application:** Provides an interactive command-line interface (`app.py`) demonstrating the complete RAG workflow from question input to answer output [cite: highschool_textbook_rag/app.py].
+
+* **Web Crawling:** Extracts textbook data (images and metadata) directly from online sources (e.g., hoc10.vn).
+* **Automated Data Extraction:** Crawls and retrieves textbook images and metadata from online sources.
+* **Advanced OCR:** Utilizes a Vision-Language Model to accurately extract text from textbook images.
+* **Semantic Text Processing:** Chunks text and generates meaningful vector embeddings using a state-of-the-art model (`BAAI/bge-m3`).
+* **Efficient Vector Storage:** Employs *Qdrant* vector database for fast indexing and retrieval of text embeddings.
+* **Context-Aware Retrieval:** Finds the most relevant text passages based on semantic similarity to the user's query.
+* **LLM-Powered Generation:** Integrates with Google's Gemini/OpenAI GPT API to generate answers based on retrieved context.
+* **Interactive QA:** Provides a command-line interface for users to ask questions and receive answers.
 
 ## Technical Stack
 
-* **Programming Language:** Python
-* **Core Libraries:**
-    * `transformers`: For loading and using the Vintern-1B-v2 OCR model [cite: highschool_textbook_rag/orc.py].
-    * `FlagEmbedding`: For loading and using the BAAI/bge-m3 embedding model [cite: highschool_textbook_rag/rag/embed.py, highschool_textbook_rag/requirements.txt].
-    * `qdrant-client`: For interacting with the Qdrant vector database [cite: highschool_textbook_rag/rag/indexer.py, highschool_textbook_rag/requirements.txt].
-    * `google-genai`: For interacting with the Gemini LLM API [cite: highschool_textbook_rag/rag/generator.py].
-    * `requests`: For web crawling [cite: highschool_textbook_rag/extract_book.py, highschool_textbook_rag/requirements.txt].
-    * `Pillow (PIL)`: For image processing in the OCR pipeline [cite: highschool_textbook_rag/orc.py].
-    * `torch`, `torchvision`, `timm`, `flash-attn`, `einops`: Dependencies for the OCR and potentially embedding models [cite: highschool_textbook_rag/requirements.txt, highschool_textbook_rag/orc.py].
-    * `dotenv`: For managing API keys [cite: highschool_textbook_rag/rag/generator.py].
-* **Models:**
-    * OCR: `5CD-AI/Vintern-1B-v2` [cite: highschool_textbook_rag/orc.py]
-    * Embedding: `BAAI/bge-m3` [cite: highschool_textbook_rag/rag/embed.py]
-    * Generation: `gemini-2.0-flash` (via Google GenAI API) [cite: highschool_textbook_rag/rag/generator.py]
-* **Vector Database:** Qdrant [cite: highschool_textbook_rag/rag/indexer.py]
+* **Language:** Python
+* **Key Libraries:** `transformers`, `FlagEmbedding`, `qdrant-client`, `google-genai`, `requests`, `Pillow`
+* **AI Models:**
+    * OCR: `5CD-AI/Vintern-1B-v2`
+    * Embedding: `BAAI/bge-m3`
+    * Generation: Google Gemini (`gemini-2.0-flash`), OpenAI GPT (`gpt-4o-mini`)
+* **Database:** Qdrant (Vector DB)
 
 ## Architecture / Pipeline
 
@@ -72,7 +70,7 @@ The primary goal is to create an intelligent assistant that can understand and r
     ```
 3.  **API Keys:**
     * Create a `.env` file in the project root.
-    * Add your Google Gemini API key: `GEMINI_API_KEY='YOUR_API_KEY'` [cite: highschool_textbook_rag/rag/generator.py].
+    * Add your Google Gemini API key: `GEMINI_API_KEY='YOUR_API_KEY'`
 4.  **Data Preparation:**
     * Run `extract_book.py` to download textbook data (e.g., `python extract_book.py`). This will create image files in `data/{book_id}_{book_name}/pages/`.
     * Run `orc.py` to perform OCR on the downloaded images (e.g., `python orc.py`). This will create text files in `data/{book_id}_{book_name}/text/`. Ensure the correct `pages_dir` is set in `orc.py`.
@@ -89,14 +87,15 @@ The primary goal is to create an intelligent assistant that can understand and r
 
 This project showcases a range of skills crucial for Data Science and AI Engineering roles:
 
-* **AI Pipeline Development:** Designing and implementing a multi-stage AI workflow involving data extraction, preprocessing, OCR, embedding, indexing, retrieval, and generation.
-* **NLP & Information Retrieval:** Applying text chunking techniques, utilizing state-of-the-art embedding models (BGE-M3) for semantic understanding, and implementing vector-based retrieval using Qdrant.
-* **Computer Vision (OCR):** Integrating and utilizing advanced Vision-Language Models (Vintern-1B-v2) for accurate text extraction from images.
-* **LLM Integration & Prompt Engineering:** Interfacing with large language models (Gemini) via APIs and crafting effective prompts for RAG tasks.
-* **Vector Databases:** Experience with setting up and using Qdrant for efficient similarity search on high-dimensional data.
-* **Software Engineering:** Structuring code into modular components (data extraction, OCR, RAG modules), managing dependencies (`requirements.txt`), and building a functional application (`app.py`).
+
+* **AI/ML Pipeline Construction:** End-to-end design and implementation (Data ingestion, OCR, NLP, Vector DB, LLM).
+* **NLP & Information Retrieval:** Text embedding, chunking, semantic search, RAG architecture.
+* **Computer Vision:** Application of OCR models for text extraction.
+* **LLM Integration:** API usage, prompt engineering for generative tasks.
+* **Vector Databases:** Practical experience with Qdrant for similarity search.
+* **Software Engineering:** Modular Python code, dependency management.
+* **Data Acquisition:** Web crawling techniques.
 * **Problem Solving:** Addressing the challenge of building a question-answering system for a specific domain (high school textbooks) using modern AI techniques.
-* **Web Crawling:** Developing scripts to automate data collection from web sources.
 
 ## Future Improvements (Optional)
 
