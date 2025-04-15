@@ -86,18 +86,24 @@ model = AutoModel.from_pretrained(
     low_cpu_mem_usage=True,
     trust_remote_code=True,
 ).eval().cuda()
-tokenizer = AutoTokenizer.from_pretrained("5CD-AI/Vintern-1B-v2", trust_remote_code=True, use_fast=False)
+tokenizer = AutoTokenizer.from_pretrained("5CD-AI/Vintern-1B-v2",
+                                          trust_remote_code=True,
+                                          use_fast=False)
 
-generation_config = dict(max_new_tokens= 1024, do_sample=False, num_beams = 3, repetition_penalty=2.5)
+generation_config = dict(max_new_tokens= 1024,
+                         do_sample=False,
+                         num_beams = 3,
+                         repetition_penalty=2.5)
 
 question = '<image>\nTrích xuất thông tin từ ảnh, bao gồm cả các tiêu đề (theo cách định dạng markdown)'
 
 pages_dir = 'data/154_ngu-van-10-tap-2/pages'
 orc_dir = pages_dir.replace('pages', 'text')
+accepted_img_extensions = ['jpg', 'jpeg', 'png']
 
 for img_name in os.listdir(pages_dir):
-    print('Processing image:', img_name)
-    if img_name.endswith('.jpg'):
+    if img_name.split('.')[-1] in accepted_img_extensions:
+        print('Processing image:', img_name)
         image_path = os.path.join(pages_dir, img_name)
         pixel_values = load_image(image_path, max_num=12).to(torch.bfloat16).cuda()
         response = model.chat(tokenizer,
@@ -109,7 +115,8 @@ for img_name in os.listdir(pages_dir):
         print(f'User: {question}\nAssistant: {response}')
 
         # Save the response to a text file
-        text_file_path = os.path.join(orc_dir, img_name.replace('.jpg', '.txt'))
+        text_file_path = os.path.join(orc_dir,
+                                      img_name.replace(img_name.split('.')[-1], 'txt'))
         os.makedirs(os.path.dirname(text_file_path), exist_ok=True)
         with open(text_file_path, 'w', encoding='utf-8') as f:
             f.write(response)
